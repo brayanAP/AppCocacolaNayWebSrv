@@ -105,9 +105,9 @@ namespace AppCocacolaNayWebSrv.Controllers
             return await (from con in FicLoDBContext.zt_inventarios_conteos where con.IdInventario == idinv && con.IdAlmacen == IdAlmacen && con.IdSKU == codigob && con.NumConteo == NumCont && con.IdUbicacion == ubicacion select con).SingleOrDefaultAsync();
         }//buscar en local
 
-        private async Task<zt_inventarios_acumulados> FicExistzt_inventarios_acumulados(int idinv, string codigob)
+        private async Task<zt_inventarios_acumulados> FicExistzt_inventarios_acumulados(int idinv, string idsku)
         {
-            return await (from acu in FicLoDBContext.zt_inventarios_acumulados where acu.IdInventario == idinv && acu.IdSKU == codigob select acu).SingleOrDefaultAsync();
+            return await (from acu in FicLoDBContext.zt_inventarios_acumulados where acu.IdInventario == idinv && acu.IdSKU == idsku select acu).SingleOrDefaultAsync();
         }//buscar en local
 
 
