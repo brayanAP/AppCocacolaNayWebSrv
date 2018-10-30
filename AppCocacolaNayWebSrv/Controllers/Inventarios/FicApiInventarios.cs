@@ -21,7 +21,7 @@ namespace AppCocacolaNayWebSrv.Controllers
         }//constructor
 
         [HttpGet]
-        [Route("api/inventarios/invacocon")]
+        [Route("api/inventarios/invacucon")]
         public async Task<IActionResult> FicApiGetListInventarios()
         {
             var zt_inventarios = (from data_inv in FicLoDBContext.zt_inventarios select data_inv).ToList();
@@ -49,7 +49,7 @@ namespace AppCocacolaNayWebSrv.Controllers
             }
 
             return NotFound("SIN INVENTARIOS");
-        }//http://localhost:60304/api/inventarios/invacocon
+        }//http://localhost:60304/api/inventarios/invacucon
 
         [HttpGet]
         [Route("api/inventarios/invacoconid")]
@@ -86,12 +86,17 @@ namespace AppCocacolaNayWebSrv.Controllers
         [Route("api/inventarios/catalogos")]
         public async Task<IActionResult> FicApiGetListCatalogos()
         {
-                return Ok(new zt_catalogos_productos_medidas_cedi_almacenes() {
+                return Ok(new temp_generales() {
+                    zt_cat_grupos_sku = await (from pro in FicLoDBContext.zt_cat_grupos_sku select pro).ToListAsync(),
                     zt_cat_productos = await (from pro in FicLoDBContext.zt_cat_productos select pro).ToListAsync(),
                     zt_cat_unidad_medidas = await (from med in FicLoDBContext.zt_cat_unidad_medidas select med).ToListAsync(),
                     zt_cat_productos_medidas = await (from prm in FicLoDBContext.zt_cat_productos_medidas select prm).ToListAsync(),
                     zt_cat_cedis = await (from ced in FicLoDBContext.zt_cat_cedis select ced).ToListAsync(),
-                    zt_cat_almacenes = await (from alm in FicLoDBContext.zt_cat_almacenes select alm).ToListAsync()
+                    zt_cat_almacenes = await (from alm in FicLoDBContext.zt_cat_almacenes select alm).ToListAsync(),
+                    zt_cat_ubicaciones = await (from alm in FicLoDBContext.zt_cat_ubicaciones select alm).ToListAsync(),
+                    zt_almacenes_ubicaciones = await (from alm in FicLoDBContext.zt_almacenes_ubicaciones select alm).ToListAsync(),
+                    zt_cat_estatus = await (from alm in FicLoDBContext.zt_cat_estatus select alm).ToListAsync()
+
                 });
         }//http://localhost:60304/api/inventarios/catalogos
 
@@ -100,7 +105,7 @@ namespace AppCocacolaNayWebSrv.Controllers
             return await (from inv in FicLoDBContext.zt_inventarios where inv.IdInventario == id select inv).SingleOrDefaultAsync();
         }//buscar en local
 
-        private async Task<zt_inventarios_conteos> FicExistzt_inventarios_conteos(int idinv, int IdAlmacen, string codigob, int NumCont, string ubicacion)
+        private async Task<zt_inventarios_conteos> FicExistzt_inventarios_conteos(int idinv, string IdAlmacen, string codigob, int NumCont, string ubicacion)
         {
             return await (from con in FicLoDBContext.zt_inventarios_conteos where con.IdInventario == idinv && con.IdAlmacen == IdAlmacen && con.IdSKU == codigob && con.NumConteo == NumCont && con.IdUbicacion == ubicacion select con).SingleOrDefaultAsync();
         }//buscar en local
@@ -132,7 +137,10 @@ namespace AppCocacolaNayWebSrv.Controllers
                             try
                             {
                                 respuesta.IdInventario = inv.IdInventario;
+                                respuesta.IdInventarioSAP = inv.IdInventarioSAP;
                                 respuesta.IdCEDI = inv.IdCEDI;
+                                respuesta.IdAlmacen = inv.IdAlmacen;
+                                respuesta.IdEstatus = inv.IdEstatus;
                                 respuesta.FechaReg = inv.FechaReg;
                                 respuesta.UsuarioReg = inv.UsuarioReg;
                                 respuesta.FechaUltMod = inv.FechaUltMod;
@@ -224,6 +232,7 @@ namespace AppCocacolaNayWebSrv.Controllers
                                 respuesta.IdInventario = inv.IdInventario;
                                 respuesta.IdSKU = inv.IdSKU;
                                 respuesta.CantidadTeorica = inv.CantidadTeorica;
+                                respuesta.CantidadTeoricaCJA = inv.CantidadTeoricaCJA;
                                 respuesta.CantidadFisica = inv.CantidadFisica;
                                 respuesta.Diferencia = inv.Diferencia;
                                 respuesta.IdUnidadMedida = inv.IdUnidadMedida;
@@ -263,7 +272,6 @@ namespace AppCocacolaNayWebSrv.Controllers
             }
             return Ok(FicMensaje);
         }//http://localhost:60304/api/inventarios/invacocon/export
-
 
     }//class
 }
